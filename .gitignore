@@ -1,0 +1,9 @@
+# SolidWorks temp/lock/backup files
+~$*
+*.SLDPRT.bak
+*.SLDASM.bak
+*.swp
+*.tmp
+*.log
+Thumbs.db
+desktop.ini
