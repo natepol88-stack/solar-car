@@ -150,10 +150,12 @@ solar-car/
 │   │   ├── Aerobody_A_KammCutoffTail.SLDPRT
 │   │   ├── Aerobody_B_ProgressivePointedTail.SLDPRT
 │   │   └── Aerobody_C_StraightSection_SingleTaper.SLDPRT
-│   └── Shelled/                    # 5 mm wall, open top/bottom, for layup and FEA
-│       ├── Aerobody_A_KammCutoffTail_Shelled.SLDPRT
-│       ├── Aerobody_B_ProgressivePointedTail_Shelled.SLDPRT
-│       └── Aerobody_C_StraightSection_SingleTaper_Shelled.SLDPRT
+│   ├── Shelled/                    # 5 mm wall, open top/bottom, for layup and FEA
+│   │   ├── Aerobody_A_KammCutoffTail_Shelled.SLDPRT
+│   │   ├── Aerobody_B_ProgressivePointedTail_Shelled.SLDPRT
+│   │   └── Aerobody_C_StraightSection_SingleTaper_Shelled.SLDPRT
+│   └── CFD/
+│       └── setup_fluent_mcp.ps1    # sets up the Fluent MCP connector for Claude Desktop
 ├── aerobody.SLDPRT                 # original aerobody concept
 ├── aero tabs v2.SLDPRT / .STL      # weld-on mounting tabs
 ├── new_tabs.SLDPRT                 # tab revision
