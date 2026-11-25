@@ -7,3 +7,6 @@
 *.log
 Thumbs.db
 desktop.ini
+
+# Local tooling scripts (not part of the CAD)
+*.ps1
