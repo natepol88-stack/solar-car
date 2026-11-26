@@ -11,6 +11,7 @@
 </p>
 
 <p align="center">
+  <a href="https://natepol88-stack.github.io/solar-car/cfd-brief/"><b>CFD brief</b></a> ·
   <a href="https://natepolishook.com/projects/solar-car"><b>Project page</b></a> ·
   <a href="https://natepolishook.com">natepolishook.com</a> ·
   <a href="https://www.linkedin.com/in/nate-polishook">LinkedIn</a>
@@ -111,6 +112,8 @@ Plan view and side profile of all three variants, plotted straight from the sket
 
 All three tails were simulated in **ANSYS Fluent 2026 R1** with identical settings: 6 runs (3 tails × coarse and medium mesh), every one converged.
 
+> 📄 **[Open the full CFD brief](https://natepol88-stack.github.io/solar-car/cfd-brief/)**
+>
 > **Result: tails B and C have about 18% less drag than the Kamm tail (A), worth ~150 W at 22 m/s. B and C are tied, so C wins on manufacturability: one straight taper instead of three facets.**
 
 <p align="center">
@@ -163,7 +166,7 @@ A leaves a pocket of dead air behind its flat base. B and C close to a thin, fas
 
 **Limits:** body only (no wheels, fairings or canopy), so absolute Cd is optimistic; use it to rank shapes. Student license caps the mesh at ~1M cells, so wall y+ is ~14 (between the ideal ranges). Steady RANS; crosswind runs are next.
 
-The full write-up with all 15 Fluent images is in [`Aero body/CFD/00_BRIEF/Aerobody_CFD_Brief.html`](Aero%20body/CFD/00_BRIEF/Aerobody_CFD_Brief.html) (download and open in a browser). Raw numbers: [`CFD_results_summary.csv`](Aero%20body/CFD/00_BRIEF/CFD_results_summary.csv).
+**[View the full CFD brief in your browser](https://natepol88-stack.github.io/solar-car/cfd-brief/)**: all 15 Fluent images, results, method and recommendation (source file: [`Aero body/CFD/00_BRIEF/Aerobody_CFD_Brief.html`](Aero%20body/CFD/00_BRIEF/Aerobody_CFD_Brief.html)). Raw numbers: [`CFD_results_summary.csv`](Aero%20body/CFD/00_BRIEF/CFD_results_summary.csv).
 
 ---
 
