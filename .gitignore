@@ -10,3 +10,22 @@ desktop.ini
 
 # Local tooling scripts (not part of the CAD)
 *.ps1
+
+# ANSYS Fluent: large solution/mesh files and run clutter (kept locally)
+*.h5
+*.cas
+*.dat
+*.msh
+*.trn
+*.bak
+fluent-*.log
+cleanup-fluent-*.bat
+pyfluent_watchdog*
+FM_*/
+*_workflow_files/
+Aero body/CFD/03_Meshes/
+Aero body/CFD/06_Logs/
+Aero body/CFD/07_Setup_Tools/
+Aero body/CFD/99_Archive_scratch/
+Aero body/CFD/02_Results_Data/case_and_data/
+log_*.txt

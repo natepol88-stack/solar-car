@@ -29,7 +29,7 @@ CAD and design work I'm doing as a mechatronics engineer on the **Rutgers Solar 
 - [Aerobody concepts](#aerobody-concepts)
 - [Tail geometry comparison](#tail-geometry-comparison)
 - [Key specs](#key-specs)
-- [CFD plan](#cfd-plan)
+- [CFD results](#cfd-results)
 - [Fabrication parts](#fabrication-parts)
 - [Repository layout](#repository-layout)
 - [Opening the files](#opening-the-files)
@@ -59,7 +59,7 @@ A short flat section into three progressively steeper facets (9°, 15°, 25°) t
 
 ### C: Straight section, single taper
 
-A medium flat section into one 16.8° taper to a 40 mm trailing edge. Fewest tail panels of the pointed options, with a higher risk of flow separation on the taper.
+A medium flat section into one 16.8° taper to a 40 mm trailing edge. Fewest tail panels of the pointed options. **Lowest drag in CFD (Cd 0.0988), with no flow separation on the taper.**
 
 | Solid (CFD body) | Shelled (5 mm wall) |
 |:---:|:---:|
@@ -107,15 +107,63 @@ Plan view and side profile of all three variants, plotted straight from the sket
 
 ---
 
-## CFD plan
+## CFD results
 
-The three variants are being compared in **ANSYS Fluent** with identical settings so the ranking is fair.
+All three tails were simulated in **ANSYS Fluent 2026 R1** with identical settings: 6 runs (3 tails × coarse and medium mesh), every one converged.
 
-- **Setup:** steady, pressure-based coupled solver, k-ω SST, second-order discretization, symmetric half model
-- **Domain:** 15 m upstream, 30 m downstream, ~1.1% blockage, moving ground at 22 m/s
-- **Mesh:** Fluent watertight workflow, poly-hexcore with inflation layers on the body and refinement boxes for the underbody and wake
-- **Output:** drag coefficient averaged over 500 iterations; at 22 m/s every **0.01 of Cd ≈ 68 W** of aero power, which is a big deal on a solar budget
-- **Validation:** Ahmed body (0° squareback) as a sanity check, plus a coarse vs. medium mesh run to confirm the A/B/C ranking holds
+> **Result: tails B and C have about 18% less drag than the Kamm tail (A), worth ~150 W at 22 m/s. B and C are tied, so C wins on manufacturability: one straight taper instead of three facets.**
+
+<p align="center">
+  <img src="Aero%20body/CFD/00_BRIEF/chart_drag_breakdown.png" alt="Drag breakdown for tails A, B and C" width="70%">
+</p>
+
+| Tail | Cd (coarse) | Cd (medium) | Pressure Cd | Skin friction Cd | Drag power @ 22 m/s |
+|---|:---:|:---:|:---:|:---:|:---:|
+| A: Kamm cutoff | 0.1209 | 0.1211 | 0.0729 | 0.0482 | 821 W |
+| B: Progressive point | 0.1000 | 0.0991 | 0.0593 | 0.0398 | 672 W |
+| **C: Single taper** | **0.0992** | **0.0988** | **0.0580** | **0.0408** | **670 W** |
+
+Coarse (~575k cells) and medium (~750k cells) meshes agree within 1% for every tail, so the ranking is not a mesh artifact. The Kamm base itself is only ~1% of A's drag; A loses because it is a bigger body with more wetted surface and a fuller rear.
+
+### Surface pressure (Cp)
+
+Red is air hitting the surface, blue is air accelerating over a crease. B and C recover pressure over a longer taper at the rear.
+
+| A: Kamm | B: Progressive point | C: Single taper |
+|:---:|:---:|:---:|
+| <img src="Aero%20body/CFD/01_Images_Fluent/A_1_pressure_iso.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/B_1_pressure_iso.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_1_pressure_iso.png" width="100%"> |
+
+### Wall shear stress (separation check)
+
+Negative (blue) x-wall shear means reversed flow. Apart from the nose stagnation point, all three stay attached to the tip, including C's 16.8° taper.
+
+| A: Kamm | B: Progressive point | C: Single taper |
+|:---:|:---:|:---:|
+| <img src="Aero%20body/CFD/01_Images_Fluent/A_2_wallshear_top.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/B_2_wallshear_top.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_2_wallshear_top.png" width="100%"> |
+
+### Wake (velocity, centerline and mid-height slices)
+
+A leaves a pocket of dead air behind its flat base. B and C close to a thin, fast-recovering wake.
+
+| A: Kamm | B: Progressive point | C: Single taper |
+|:---:|:---:|:---:|
+| <img src="Aero%20body/CFD/01_Images_Fluent/A_4_velocity_centerline.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/B_4_velocity_centerline.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_4_velocity_centerline.png" width="100%"> |
+| <img src="Aero%20body/CFD/01_Images_Fluent/A_5_velocity_midheight_top.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/B_5_velocity_midheight_top.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_5_velocity_midheight_top.png" width="100%"> |
+
+### Setup
+
+- **Solver:** steady, pressure-based coupled, k-ω SST, second order, symmetric half model
+- **Domain:** 50 × 7 × 7 m (15 m upstream, 30 m downstream), ~1% blockage, ground moving at 22 m/s
+- **Mesh:** Fluent Meshing watertight workflow, poly-hexcore, 8 prism layers on the body (0.5 mm first layer), refinement boxes around the body, underbody and wake
+- **Convergence:** Cd averaged over the last 100 iterations; it varied by less than 0.00001 over that window in every run
+
+<p align="center">
+  <img src="Aero%20body/CFD/00_BRIEF/chart_convergence.png" alt="Cd convergence history for all six runs" width="100%">
+</p>
+
+**Limits:** body only (no wheels, fairings or canopy), so absolute Cd is optimistic; use it to rank shapes. Student license caps the mesh at ~1M cells, so wall y+ is ~14 (between the ideal ranges). Steady RANS; crosswind runs are next.
+
+The full write-up with all 15 Fluent images is in [`Aero body/CFD/00_BRIEF/Aerobody_CFD_Brief.html`](Aero%20body/CFD/00_BRIEF/Aerobody_CFD_Brief.html) (download and open in a browser). Raw numbers: [`CFD_results_summary.csv`](Aero%20body/CFD/00_BRIEF/CFD_results_summary.csv).
 
 ---
 
@@ -150,10 +198,16 @@ solar-car/
 │   │   ├── Aerobody_A_KammCutoffTail.SLDPRT
 │   │   ├── Aerobody_B_ProgressivePointedTail.SLDPRT
 │   │   └── Aerobody_C_StraightSection_SingleTaper.SLDPRT
-│   └── Shelled/                    # 5 mm wall, open top/bottom, for layup and FEA
-│       ├── Aerobody_A_KammCutoffTail_Shelled.SLDPRT
-│       ├── Aerobody_B_ProgressivePointedTail_Shelled.SLDPRT
-│       └── Aerobody_C_StraightSection_SingleTaper_Shelled.SLDPRT
+│   ├── Shelled/                    # 5 mm wall, open top/bottom, for layup and FEA
+│   │   ├── Aerobody_A_KammCutoffTail_Shelled.SLDPRT
+│   │   ├── Aerobody_B_ProgressivePointedTail_Shelled.SLDPRT
+│   │   └── Aerobody_C_StraightSection_SingleTaper_Shelled.SLDPRT
+│   └── CFD/                        # ANSYS Fluent study of tails A, B, C
+│       ├── 00_BRIEF/               # full results brief (HTML), charts, results CSV
+│       ├── 01_Images_Fluent/       # 15 Fluent renders (pressure, wall shear, wake)
+│       ├── 02_Results_Data/        # Cd/Cl history for all 6 runs
+│       ├── 04_Setup_and_Batch/     # Fluent journals and batch runner
+│       └── 05_Geometry/            # exported bodies + half-car air domains
 ├── aerobody.SLDPRT                 # original aerobody concept
 ├── aero tabs v2.SLDPRT / .STL      # weld-on mounting tabs
 ├── new_tabs.SLDPRT                 # tab revision
@@ -175,7 +229,8 @@ All dimensions are driven from the origin per corner plus fillet radii, so any f
 
 - Parts are **SolidWorks** `.SLDPRT` files. Open them with **File → Open** (type: Part).
 - The `.STL` files can be previewed directly on GitHub or opened in any slicer/viewer.
-- For CFD, export the **Solid** bodies as Parasolid (`.x_t`) for ANSYS Workbench.
+- For CFD, export the **Solid** bodies as Parasolid (`.x_t`) for ANSYS Workbench. Ready-made exports and air domains are in `Aero body/CFD/05_Geometry/`.
+- Fluent solution and mesh files (`.h5`, about 1.4 GB) are kept locally and not in this repo.
 
 ---
 
@@ -184,10 +239,12 @@ All dimensions are driven from the origin per corner plus fillet radii, so any f
 - [x] Three panelized aerobody concepts (A, B, C), solid and shelled
 - [x] Tube contour gauge and weld-on tabs
 - [x] Hand calcs and CFD setup
-- [ ] Run Fluent on A, B and C and pick the lowest-drag variant
+- [x] Run Fluent on A, B and C and pick the lowest-drag variant (C)
 - [ ] Round the long top/side edges to control edge vortices
 - [ ] Parametric sweep of the winning tail in DesignXplorer
-- [ ] Full-car crosswind (yaw) runs
+- [ ] Crosswind (yaw 5° / 10°) runs on A and C
+- [ ] Full-car model with wheels, fairings and canopy
+- [ ] Confirm driver, battery and chassis packaging inside tail C
 - [ ] Lock side profile to final chassis and driver envelope
 - [ ] Layup plan and mold design for the panels
 - [ ] A-arm design for lower weight and higher stiffness

@@ -1,0 +1,8 @@
+/file/start-transcript "trn_B_coarse.txt"
+/file/read-case "setup_B_coarse.cas.h5"
+/solve/initialize/hyb-initialization
+/solve/iterate 400
+/file/write-case-data "B_coarse.cas.h5"
+/file/stop-transcript
+/exit
+yes

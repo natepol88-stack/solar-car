@@ -1,0 +1,8 @@
+/file/start-transcript "trn_C_medium.txt"
+/file/read-case "setup_C_medium.cas.h5"
+/solve/initialize/hyb-initialization
+/solve/iterate 500
+/file/write-case-data "C_medium.cas.h5"
+/file/stop-transcript
+/exit
+yes
