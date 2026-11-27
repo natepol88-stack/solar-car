@@ -29,3 +29,6 @@ Aero body/CFD/07_Setup_Tools/
 Aero body/CFD/99_Archive_scratch/
 Aero body/CFD/02_Results_Data/case_and_data/
 log_*.txt
+
+# Private Claude skill copies (never push)
+_Claude_Skills/
