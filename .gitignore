@@ -32,3 +32,6 @@ log_*.txt
 
 # Private Claude skill copies (never push)
 _Claude_Skills/
+
+# CFD setup/batch scripts (kept locally)
+Aero body/CFD/04_Setup_and_Batch/

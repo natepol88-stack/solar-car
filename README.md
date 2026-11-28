@@ -11,7 +11,8 @@
 </p>
 
 <p align="center">
-  <a href="https://natepol88-stack.github.io/solar-car/cfd-brief/"><b>CFD brief</b></a> ·
+  <a href="https://natepol88-stack.github.io/solar-car/cfd-brief/"><b>CFD brief (tails A/B/C)</b></a> ·
+  <a href="https://natepol88-stack.github.io/solar-car/cfd-brief-c-v2/"><b>CFD brief (C v2 redesign)</b></a> ·
   <a href="https://natepolishook.com/projects/solar-car"><b>Project page</b></a> ·
   <a href="https://natepolishook.com">natepolishook.com</a> ·
   <a href="https://www.linkedin.com/in/nate-polishook">LinkedIn</a>
@@ -31,6 +32,7 @@ CAD and design work I'm doing as a mechatronics engineer on the **Rutgers Solar 
 - [Tail geometry comparison](#tail-geometry-comparison)
 - [Key specs](#key-specs)
 - [CFD results](#cfd-results)
+- [C v2 redesign: flat panels](#c-v2-redesign-flat-panels)
 - [Fabrication parts](#fabrication-parts)
 - [Repository layout](#repository-layout)
 - [Opening the files](#opening-the-files)
@@ -170,6 +172,40 @@ A leaves a pocket of dead air behind its flat base. B and C close to a thin, fas
 
 ---
 
+## C v2 redesign: flat panels
+
+With tail C chosen, I tried to make it even easier to build: replace every curved transition with flat facets so almost every carbon panel is flat. Three variants, each adding one change so the CFD isolates its effect. Same setup as the tail study (half model, 22 m/s, k-omega SST, moving ground, coarse + medium mesh).
+
+> 📄 **[Open the C v2 CFD brief](https://natepol88-stack.github.io/solar-car/cfd-brief-c-v2/)**
+
+| Variant | Change | Cd (medium) | Downforce | Drag power @ 22 m/s |
+|:--|:--|--:|--:|--:|
+| **C original** | curved transitions (fillets) | **0.0988** | 133 N | **670 W** |
+| v2A Faceted | every fillet replaced by flat facets (kinks up to 14°) | 0.1075 | 133 N | 729 W |
+| v2B +LowLift | + tail bottom kick 4.5° → 2.5°, top drops earlier | 0.1065 | 80 N | 722 W |
+| v2C +LongTaper | + plan taper 16.8° → 14.7° | 0.1066 | 75 N | 723 W |
+
+<p align="center">
+  <img src="Aero%20body/CFD/00_BRIEF/chart_drag_breakdown_v2.png" alt="Drag breakdown, C vs v2A/B/C" width="70%">
+</p>
+
+**What I learned**
+
+- **Sharp faceting cost 59 W (+8.8%)**, all of it pressure drag: every kink makes a thin suction line, worst at the shoulders. No flow separation anywhere.
+- **The low-downforce side profile works:** 40% less downforce (less tire load and rolling loss) and slightly less drag. Worth carrying back into C.
+- **The longer taper did nothing:** less skin friction, the same amount back as pressure drag, and less room inside.
+- Coarse vs medium mesh within 0.73% on every variant.
+
+| C original | v2A Faceted | v2B +LowLift | v2C +LongTaper |
+|:---:|:---:|:---:|:---:|
+| <img src="Aero%20body/CFD/01_Images_Fluent/C_1_pressure_iso.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_v2/v2A_1_pressure_iso.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_v2/v2B_1_pressure_iso.png" width="100%"> | <img src="Aero%20body/CFD/01_Images_Fluent/C_v2/v2C_1_pressure_iso.png" width="100%"> |
+
+**Next (C v3):** original C + the LowLift side profile, then test finer facets (5° or less per kink) and a hybrid that keeps the small nose corners as single-curve strips, to find how flat the panels can go before drag climbs.
+
+CAD: [`Aero body/C_v2/`](Aero%20body/C_v2) (solid + shelled, all editable, coordinates in [`README_C_v2.md`](Aero%20body/C_v2/README_C_v2.md)). Raw numbers: [`CFD_C_v2_results_summary.csv`](Aero%20body/CFD/00_BRIEF/CFD_C_v2_results_summary.csv).
+
+---
+
 ## Fabrication parts
 
 Alongside the body I'm designing hardware for the chassis and for the shop.
@@ -205,17 +241,18 @@ solar-car/
 │   │   ├── Aerobody_A_KammCutoffTail_Shelled.SLDPRT
 │   │   ├── Aerobody_B_ProgressivePointedTail_Shelled.SLDPRT
 │   │   └── Aerobody_C_StraightSection_SingleTaper_Shelled.SLDPRT
-│   └── CFD/                        # ANSYS Fluent study of tails A, B, C
-│       ├── 00_BRIEF/               # full results brief (HTML), charts, results CSV
-│       ├── 01_Images_Fluent/       # 15 Fluent renders (pressure, wall shear, wake)
-│       ├── 02_Results_Data/        # Cd/Cl history for all 6 runs
+│   ├── C_v2/                       # flat-panel redesign of C: v2A/B/C solid + shelled, screenshots
+│   └── CFD/                        # ANSYS Fluent studies (tails A/B/C, then C v2)
+│       ├── 00_BRIEF/               # both results briefs (HTML), charts, results CSVs
+│       ├── 01_Images_Fluent/       # Fluent renders (tails A/B/C; C_v2/ for the redesign)
+│       ├── 02_Results_Data/        # Cd/Cl history for every run
 │       ├── 04_Setup_and_Batch/     # Fluent journals and batch runner
-│       └── 05_Geometry/            # exported bodies + half-car air domains
+│       └── 05_Geometry/            # exported bodies + half-car air domains (C_v2/ too)
 ├── aerobody.SLDPRT                 # original aerobody concept
 ├── aero tabs v2.SLDPRT / .STL      # weld-on mounting tabs
 ├── new_tabs.SLDPRT                 # tab revision
 ├── tube_contour_gauge.SLDPRT / .STL
-└── docs/images/                    # renders and plots used in this README
+└── docs/                         # README images + the two web briefs (cfd-brief, cfd-brief-c-v2)
 ```
 
 Every aerobody part uses the same clean, fully editable feature tree:
@@ -243,6 +280,8 @@ All dimensions are driven from the origin per corner plus fillet radii, so any f
 - [x] Tube contour gauge and weld-on tabs
 - [x] Hand calcs and CFD setup
 - [x] Run Fluent on A, B and C and pick the lowest-drag variant (C)
+- [x] Flat-panel redesign of C (v2A/B/C) and CFD: faceting costs 59 W, LowLift profile worth keeping
+- [ ] C v3: original C + LowLift profile, fine-facet and hybrid versions
 - [ ] Round the long top/side edges to control edge vortices
 - [ ] Parametric sweep of the winning tail in DesignXplorer
 - [ ] Crosswind (yaw 5° / 10°) runs on A and C
